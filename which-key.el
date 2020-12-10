@@ -2715,9 +2715,10 @@ Finally, show the buffer."
                           (kbd which-key--god-mode-key-string))))
     this-command-keys))
 
+;; TODO: Modify which-key-undo-key to undo transient maps
+
 (defun which-key--update ()
-  "Function run by timer to possibly trigger
-`which-key--create-buffer-and-show'."
+  "Modified which-key--update that allows hydras to display."
   (let ((prefix-keys (which-key--this-command-keys))
         delay-time)
     (cond ((and (> (length prefix-keys) 0)
@@ -2758,10 +2759,7 @@ Finally, show the buffer."
                         (not which-key--secondary-timer-active))
                (which-key--start-timer which-key-idle-secondary-delay t))))
           ((and which-key-show-transient-maps
-                (keymapp overriding-terminal-local-map)
-                ;; basic test for it being a hydra
-                (not (eq (lookup-key overriding-terminal-local-map "\C-u")
-                         'hydra--universal-argument)))
+                (keymapp overriding-terminal-local-map))
            (which-key--create-buffer-and-show
             nil overriding-terminal-local-map))
           ((and which-key-show-operator-state-maps
